@@ -1,8 +1,6 @@
 using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Collections.Generic;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Host;
 using Microsoft.Extensions.Logging;
 
 namespace Azure.Messaging.ServiceBus
@@ -15,18 +13,28 @@ namespace Azure.Messaging.ServiceBus
             string myQueueItem,
             string MessageId,
             long SequenceNumber,
+            Int32 deliveryCount,
+            DateTime enqueuedTimeUtc,
+            IDictionary<string, object> ApplicationProperties,
             [Blob("outcontainer/sample-blob", Connection = "jdsdatalakesa_BLOB")] out string blobContent,
             ILogger log)
         {
+            string myData = ApplicationProperties["data"].ToString();
             blobContent = new
             {
                 MessageId,
                 SequenceNumber,
-                myQueueItem
+                myQueueItem,
+                deliveryCount,
+                enqueuedTimeUtc,
+                myData,
             }.ToString();
-            log.LogInformation($"C# ServiceBus queue trigger function processed message: {myQueueItem}");
-            log.LogInformation($"C# ServiceBus queue trigger function processed message: {MessageId}");
-            log.LogInformation($"C# ServiceBus queue trigger function processed message: {SequenceNumber}");
+            log.LogInformation($"C# ServiceBus processed message: {myQueueItem}");
+            log.LogInformation($"C# ServiceBus processed messageId: {MessageId}");
+            log.LogInformation($"C# ServiceBus processed ApplicationProperties Data: {ApplicationProperties["data"]}");
+            log.LogInformation($"C# ServiceBus processed SequenceNumber: {SequenceNumber}");
+            log.LogInformation($"C# ServiceBus processed deliveryCount: {deliveryCount}");
+            log.LogInformation($"C# ServiceBus processed enqueuedTime: {enqueuedTimeUtc}");
         }
     }
 }
