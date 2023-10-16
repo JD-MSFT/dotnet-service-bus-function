@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
-using Microsoft.VisualBasic;
 
 namespace Azure.Messaging.ServiceBus
 {
