@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using Microsoft.VisualBasic;
 
 namespace Azure.Messaging.ServiceBus
 {
     public class ServiceBusQueueTrigger1
     {
         [FunctionName("ServiceBusQueueTrigger1")]
+        
         public void Run(
             [ServiceBusTrigger("jdsq", Connection = "jdsservicebus_SERVICEBUS")]
             string myQueueItem,
@@ -17,8 +19,9 @@ namespace Azure.Messaging.ServiceBus
             Int32 deliveryCount,
             DateTime enqueuedTimeUtc,
             IDictionary<string, object> ApplicationProperties,
-            [Blob("outcontainer/sample-blob", Connection = "jdsdatalakesa_BLOB")] out string blobContent,
+            [Blob("outcontainer/{MessageId}", Connection = "jdsdatalakesa_BLOB")] out string blobContent,
             ILogger log)
+
         {
             string myData = ApplicationProperties["data"].ToString();
             blobContent = JsonSerializer.Serialize(new
@@ -30,6 +33,7 @@ namespace Azure.Messaging.ServiceBus
                 enqueuedTimeUtc,
                 myData,
             });
+
             log.LogInformation($"C# ServiceBus processed message: {myQueueItem}");
             log.LogInformation($"C# ServiceBus processed messageId: {MessageId}");
             log.LogInformation($"C# ServiceBus processed ApplicationProperties Data: {ApplicationProperties["data"]}");
