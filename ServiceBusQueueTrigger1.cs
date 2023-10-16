@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace Azure.Messaging.ServiceBus
 {
@@ -20,7 +21,7 @@ namespace Azure.Messaging.ServiceBus
             ILogger log)
         {
             string myData = ApplicationProperties["data"].ToString();
-            blobContent = new
+            blobContent = JsonSerializer.Serialize(new
             {
                 MessageId,
                 SequenceNumber,
@@ -28,13 +29,13 @@ namespace Azure.Messaging.ServiceBus
                 deliveryCount,
                 enqueuedTimeUtc,
                 myData,
-            }.ToString();
+            });
             log.LogInformation($"C# ServiceBus processed message: {myQueueItem}");
             log.LogInformation($"C# ServiceBus processed messageId: {MessageId}");
             log.LogInformation($"C# ServiceBus processed ApplicationProperties Data: {ApplicationProperties["data"]}");
             log.LogInformation($"C# ServiceBus processed SequenceNumber: {SequenceNumber}");
-            log.LogInformation($"C# ServiceBus processed deliveryCount: {deliveryCount}");
-            log.LogInformation($"C# ServiceBus processed enqueuedTime: {enqueuedTimeUtc}");
+            log.LogError($"Error in the system");
+            log.LogWarning($"Warning in the system");
         }
     }
 }
